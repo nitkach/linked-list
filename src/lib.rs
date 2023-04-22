@@ -57,17 +57,17 @@ impl LinkedList {
         curr_node
     }
 
+    fn create_node(elem: i32, next: &mut Option<Box<Node>>) -> Option<Box<Node>> {
+        Some(Box::new(Node::new(elem, mem::take(next))))
+    }
+
     #[must_use]
     pub const fn new() -> Self {
         Self { head: None, len: 0 }
     }
 
-    // fn push(&mut self, elem: i32) {
-
-    // }
-
-    fn create_node(elem: i32, next: &mut Option<Box<Node>>) -> Option<Box<Node>> {
-        Some(Box::new(Node::new(elem, mem::take(next))))
+    pub fn push(&mut self, elem: i32) {
+        self.insert(self.len, elem);
     }
 
     #[track_caller]
@@ -85,27 +85,37 @@ impl LinkedList {
 
         self.len += 1;
     }
+
+    pub fn remove(&mut self, index: usize) -> i32 {
+        self.check_index(index, false);
+
+        let mut previous_node = self.find_node(index - 1);
+
+        let temp = previous_node.next.as_ref().expect("BUG: index was checked before");
+        previous_node.next = previous_node.next.as_mut().expect("BUG: Node under index must exist").next;
+
+        temp
+        // [(0, 10) (1)-> (1, 20) (2)-> (2, 30)]
+        // temp = 20
+        //
+    }
+
+    pub fn get(&self, index: usize) -> Option<i32> {
+        let mut curr_node = &self.head;
+        let mut count = 0;
+
+        while !curr_node.is_none() && (count < index) {
+            count += 1;
+            curr_node = &curr_node.as_ref().unwrap().next;
+        };
+
+        if !curr_node.is_none() {
+            Some(curr_node.as_ref().unwrap().elem)
+        } else {
+            None
+        }
+    }
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn insert_into_empty_success() {
-        let mut list = LinkedList::new();
-
-        list.insert(1, 99);
-
-        let expected = r#"LinkedList {
-    head: Some(
-        Node {
-            next: None,
-            elem: 99,
-        },
-    ),
-    len: 1,
-}"#;
-        assert_eq!(format!("{list:#?}"), expected);
-    }
-}
+mod tests;

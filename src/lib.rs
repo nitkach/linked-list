@@ -21,9 +21,15 @@ struct Node {
 impl Node {
     fn new(elem: i32, next: Option<Box<Node>>) -> Node {
         Node {
-            elem: elem,
-            next: next,
+            next,
+            elem,
         }
+    }
+}
+
+impl Default for LinkedList {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -40,18 +46,20 @@ impl LinkedList {
             .as_mut()
             .expect("BUG: check_index must have validated self.head exist");
 
-        let count: usize = 0;
+        let mut count: usize = 0;
 
         while count < index {
             curr_node = curr_node
                 .next
                 .as_mut()
                 .expect("BUG: Node under index must exist");
+            count += 1;
         }
 
-        return curr_node;
+        curr_node
     }
 
+    #[must_use]
     pub fn new() -> LinkedList {
         LinkedList { head: None, len: 0 }
     }
@@ -63,13 +71,13 @@ impl LinkedList {
     pub fn insert(&mut self, index: usize, elem: i32) {
         self.check_index(index, true);
 
-        if let None = self.head {
-            self.head = Some(Box::new(Node::new(elem, None)))
+        if self.head.is_none() {
+            self.head = Some(Box::new(Node::new(elem, None)));
         } else if index == 0 {
             self.head = Some(Box::new(Node::new(elem, mem::take(&mut self.head))));
         } else {
             let prev_node: &mut Node = self.find_node(index - 1);
-            prev_node.next = Some(Box::new(Node::new(elem, mem::take(&mut prev_node.next))))
+            prev_node.next = Some(Box::new(Node::new(elem, mem::take(&mut prev_node.next))));
         }
 
         self.len += 1;

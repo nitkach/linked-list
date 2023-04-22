@@ -15,6 +15,7 @@ pub struct LinkedList {
 struct Node {
     // Some = point on existing Node, None = pointer not exist
     next: Option<Box<Node>>,
+    #[allow(dead_code)]
     elem: i32,
 }
 

@@ -21,10 +21,7 @@ struct Node {
 
 impl Node {
     fn new(elem: i32, next: Option<Box<Node>>) -> Node {
-        Node {
-            next,
-            elem,
-        }
+        Node { next, elem }
     }
 }
 
@@ -36,9 +33,11 @@ impl Default for LinkedList {
 
 impl LinkedList {
     fn check_index(&self, index: usize, include_border: bool) {
-        if index > self.len + (usize::from(include_border) - 1) {
-            panic!("Index {index} is out of bound! List length: {}", self.len)
-        }
+        assert!(
+            index <= self.len + (usize::from(include_border) - 1),
+            "Index {index} is out of bound! List length: {}",
+            self.len
+        );
     }
 
     fn find_node(&mut self, index: usize) -> &mut Node {

@@ -1,13 +1,7 @@
 use super::*;
 
 fn create_list() -> LinkedList {
-    let mut list = LinkedList::new();
-
-    list.push(10);
-    list.push(20);
-    list.push(30);
-
-    list
+    LinkedList::from_iter(vec![10, 20, 30])
 }
 
 #[test]
@@ -108,9 +102,40 @@ fn get_from_empty() {
 fn get_from_non_empty() {
     let list = create_list();
 
+    dbg!(&list);
+
     assert_eq!(list.get(0), Some(10));
     assert_eq!(list.get(1), Some(20));
     assert_eq!(list.get(2), Some(30));
 
     assert_eq!(list.get(3), None);
+}
+
+#[test]
+#[should_panic]
+fn remove_from_empty() {
+    let mut list = LinkedList::new();
+
+    list.remove(0);
+}
+
+#[test]
+fn remove_from_head_non_empty() {
+    let mut list = create_list();
+
+    assert_eq!(list.remove(0), 10);
+}
+
+#[test]
+fn remove_from_middle_non_empty() {
+    let mut list = create_list();
+
+    assert_eq!(list.remove(1), 20);
+}
+
+#[test]
+fn remove_from_tail_non_empty() {
+    let mut list = create_list();
+
+    assert_eq!(list.remove(2), 30);
 }
